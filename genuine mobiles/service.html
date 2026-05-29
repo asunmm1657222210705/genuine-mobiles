@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Book Service - Genuine Mobile's</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">Genuine <span>Mobile's</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="phones.html">Phones</a>
+      <a href="service.html" class="active">Service Booking</a>
+      <a href="contact.html">Contact</a>
+      <a href="admin/login.html" class="admin-link">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<section class="container page-section">
+  <h1 class="section-title">Book a Repair Service</h1>
+  <p class="muted center">Fill the form to book your mobile repair or purchase appointment.</p>
+
+  <form id="booking-form" class="form-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Your Name *</label>
+        <input type="text" name="name" required />
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" name="phone" pattern="[0-9]{10}" required />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" />
+      </div>
+      <div class="form-group">
+        <label>Service Type *</label>
+        <select name="serviceType" required>
+          <option value="">Select Service</option>
+          <option>Screen Replacement</option>
+          <option>Battery Replacement</option>
+          <option>Software Issue</option>
+          <option>Water Damage</option>
+          <option>Charging Port Repair</option>
+          <option>Buy New Phone</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mobile Brand *</label>
+        <input type="text" name="brand" placeholder="e.g. Samsung, Apple" required />
+      </div>
+      <div class="form-group">
+        <label>Mobile Model *</label>
+        <input type="text" name="model" placeholder="e.g. Galaxy S23" required />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Preferred Date *</label>
+        <input type="date" name="date" required />
+      </div>
+      <div class="form-group">
+        <label>Preferred Time *</label>
+        <input type="time" name="time" required />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Describe the Issue</label>
+      <textarea name="issue" rows="4" placeholder="Tell us what's wrong with your phone..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Submit Booking</button>
+  </form>
+
+  <div id="booking-success" class="success-msg" style="display:none">
+    ✅ Booking submitted successfully! We'll contact you soon.
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container"><p>© 2026 Genuine Mobile's</p></div>
+</footer>
+
+<script src="js/db.js"></script>
+<script src="js/booking.js"></script>
+</body>
+</html>

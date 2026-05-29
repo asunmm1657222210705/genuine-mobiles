@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard - Genuine Mobile's</title>
+<link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <h2>Genuine <span style="color:#0d6efd">Mobile's</span></h2>
+    <a href="dashboard.html" class="active">📊 Dashboard</a>
+    <a href="phones.html">📱 Manage Phones</a>
+    <a href="bookings.html">📋 Bookings</a>
+    <a href="../index.html">🌐 View Site</a>
+    <a href="#" onclick="DB.logout();location.href='login.html'">🚪 Logout</a>
+  </aside>
+  <main class="main-content">
+    <div class="admin-header"><h1>Dashboard</h1><span id="welcome"></span></div>
+    <div class="stat-grid" id="stats"></div>
+    <h2 style="margin:20px 0 12px">Recent Bookings</h2>
+    <div id="recent"></div>
+  </main>
+</div>
+<script src="../js/db.js"></script>
+<script>
+if (!DB.isAuth()) location.href = 'login.html';
+document.getElementById('welcome').textContent = 'Welcome, Admin';
+const phones = DB.getPhones();
+const bookings = DB.getBookings();
+const pending = bookings.filter(b => b.status === 'Pending').length;
+const totalStock = phones.reduce((s,p) => s + Number(p.stock||0), 0);
+document.getElementById('stats').innerHTML = `
+  <div class="stat-card"><h3>Total Phones</h3><div class="num">${phones.length}</div></div>
+  <div class="stat-card"><h3>Total Stock</h3><div class="num">${totalStock}</div></div>
+  <div class="stat-card"><h3>Total Bookings</h3><div class="num">${bookings.length}</div></div>
+  <div class="stat-card"><h3>Pending</h3><div class="num">${pending}</div></div>
+`;
+const recent = bookings.slice(0,5);
+document.getElementById('recent').innerHTML = recent.length ? `
+  <table><thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Brand/Model</th><th>Date</th><th>Status</th></tr></thead>
+  <tbody>${recent.map(b => `<tr><td>${b.name}</td><td>${b.phone}</td><td>${b.serviceType}</td><td>${b.brand} ${b.model}</td><td>${b.date}</td><td>${b.status}</td></tr>`).join('')}</tbody></table>
+` : '<p style="color:#888">No bookings yet.</p>';
+</script>
+</body>
+</html>

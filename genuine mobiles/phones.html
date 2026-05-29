@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Manage Phones - Admin</title>
+<link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <h2>Genuine <span style="color:#0d6efd">Mobile's</span></h2>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="phones.html" class="active">📱 Manage Phones</a>
+    <a href="bookings.html">📋 Bookings</a>
+    <a href="../index.html">🌐 View Site</a>
+    <a href="#" onclick="DB.logout();location.href='login.html'">🚪 Logout</a>
+  </aside>
+  <main class="main-content">
+    <div class="admin-header">
+      <h1>Manage Phones</h1>
+      <button class="btn btn-primary" onclick="openForm()">+ Add Phone</button>
+    </div>
+    <div id="table-wrap"></div>
+  </main>
+</div>
+
+<div id="phone-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeForm()">&times;</span>
+    <h2 id="form-title">Add Phone</h2>
+    <form id="phone-form" style="margin-top:16px">
+      <input type="hidden" name="id" />
+      <div class="form-row">
+        <div class="form-group"><label>Name *</label><input name="name" required/></div>
+        <div class="form-group"><label>Brand *</label><input name="brand" required/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Price (₹) *</label><input name="price" type="number" required/></div>
+        <div class="form-group"><label>Stock *</label><input name="stock" type="number" required/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>RAM</label><input name="ram" placeholder="8GB"/></div>
+        <div class="form-group"><label>Storage</label><input name="storage" placeholder="128GB"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Color</label><input name="color"/></div>
+        <div class="form-group"><label>Image (emoji or URL)</label><input name="image" value="📱"/></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea name="desc" rows="3"></textarea></div>
+      <button type="submit" class="btn btn-primary btn-block">Save</button>
+    </form>
+  </div>
+</div>
+
+<script src="../js/db.js"></script>
+<script>
+if (!DB.isAuth()) location.href = 'login.html';
+
+function render() {
+  const phones = DB.getPhones();
+  document.getElementById('table-wrap').innerHTML = phones.length ? `
+    <table>
+      <thead><tr><th>Image</th><th>Name</th><th>Brand</th><th>Price</th><th>RAM/Storage</th><th>Stock</th><th>Actions</th></tr></thead>
+      <tbody>${phones.map(p => `
+        <tr>
+          <td style="font-size:24px">${p.image||'📱'}</td>
+          <td>${p.name}</td>
+          <td>${p.brand}</td>
+          <td>${formatPrice(p.price)}</td>
+          <td>${p.ram||'-'} / ${p.storage||'-'}</td>
+          <td>${p.stock}</td>
+          <td>
+            <button class="btn btn-edit" onclick='editPhone(${p.id})'>Edit</button>
+            <button class="btn btn-del" onclick='delPhone(${p.id})'>Delete</button>
+          </td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  ` : '<p>No phones yet. Add one!</p>';
+}
+
+function openForm(phone=null) {
+  document.getElementById('form-title').textContent = phone ? 'Edit Phone' : 'Add Phone';
+  const form = document.getElementById('phone-form');
+  form.reset();
+  if (phone) {
+    Object.keys(phone).forEach(k => { if (form[k]) form[k].value = phone[k]; });
+  }
+  document.getElementById('phone-modal').classList.add('active');
+}
+function closeForm() { document.getElementById('phone-modal').classList.remove('active'); }
+function editPhone(id) { openForm(DB.getPhone(id)); }
+function delPhone(id) { if (confirm('Delete this phone?')) { DB.deletePhone(id); render(); } }
+
+document.getElementById('phone-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  data.price = Number(data.price); data.stock = Number(data.stock);
+  if (data.id) { DB.updatePhone(data.id, data); }
+  else { delete data.id; DB.addPhone(data); }
+  closeForm();
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

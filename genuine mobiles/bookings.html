@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bookings - Admin</title>
+<link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <h2>Genuine <span style="color:#0d6efd">Mobile's</span></h2>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="phones.html">📱 Manage Phones</a>
+    <a href="bookings.html" class="active">📋 Bookings</a>
+    <a href="../index.html">🌐 View Site</a>
+    <a href="#" onclick="DB.logout();location.href='login.html'">🚪 Logout</a>
+  </aside>
+  <main class="main-content">
+    <div class="admin-header"><h1>Service Bookings</h1></div>
+    <div id="table-wrap"></div>
+  </main>
+</div>
+<script src="../js/db.js"></script>
+<script>
+if (!DB.isAuth()) location.href = 'login.html';
+
+function render() {
+  const b = DB.getBookings();
+  document.getElementById('table-wrap').innerHTML = b.length ? `
+    <table>
+      <thead><tr><th>Name</th><th>Contact</th><th>Service</th><th>Phone Info</th><th>Date/Time</th><th>Issue</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${b.map(x => `
+        <tr>
+          <td>${x.name}</td>
+          <td>${x.phone}<br/><small>${x.email||''}</small></td>
+          <td>${x.serviceType}</td>
+          <td>${x.brand} ${x.model}</td>
+          <td>${x.date}<br/><small>${x.time}</small></td>
+          <td style="max-width:200px">${x.issue||'-'}</td>
+          <td>
+            <select onchange="DB.updateBookingStatus(${x.id}, this.value);render()">
+              ${['Pending','In Progress','Completed','Cancelled'].map(s => `<option ${s===x.status?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </td>
+          <td><button class="btn btn-del" onclick="if(confirm('Delete?')){DB.deleteBooking(${x.id});render()}">Delete</button></td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  ` : '<p>No bookings yet.</p>';
+}
+render();
+</script>
+</body>
+</html>
